@@ -1,7 +1,11 @@
 """Loading of data to use in the project."""
 
-from datasets import load_dataset
+import json
+from pathlib import Path
+
+from datasets import IterableDataset, load_dataset
 from huggingface_hub import DatasetInfo, HfApi
+from tqdm.auto import tqdm
 
 from .data_models import Example
 
@@ -23,6 +27,9 @@ def load_mapping_from_language_to_example_text() -> dict[str, str]:
     Returns:
         A dictionary mapping language codes to a text example written in that language.
     """
+    mapping_path = Path("data", "mapping_from_language_to_example_text.json")
+    mapping_path.parent.mkdir(exist_ok=True, parents=True)
+
     # Get the list of language codes in MultiWikiQA
     api = HfApi()
     repo_info = api.repo_info("alexandrainst/multi-wiki-qa", repo_type="dataset")
@@ -32,12 +39,30 @@ def load_mapping_from_language_to_example_text() -> dict[str, str]:
     languages = [config["config_name"] for config in repo_info.cardData.configs]
 
     language_to_example_text: dict[str, str] = dict()
-    for language in languages:
+    if mapping_path.exists():
+        with mapping_path.open() as file:
+            language_to_example_text = json.load(file)
+
+    for language in tqdm(
+        iterable=languages,
+        desc="Loading sample text for each language",
+        unit="language",
+    ):
+        if language in language_to_example_text:
+            continue
+
         dataset = load_dataset(
-            "alexandrainst/multi-wiki-qa", name=language, split="train"
+            "alexandrainst/multi-wiki-qa", name=language, split="train", streaming=True
         )
-        example = dataset.shuffle(seed=42)[0]["context"]
+        assert isinstance(dataset, IterableDataset), (
+            f"Expected an IterableDataset object, but got {type(dataset)}"
+        )
+
+        example = next(iter(dataset))["context"]
         assert isinstance(example, str), f"Expected a string, but got {type(example)}"
+
         language_to_example_text[language] = example
+        with mapping_path.open("w") as file:
+            json.dump(language_to_example_text, file, indent=2)
 
     return language_to_example_text
