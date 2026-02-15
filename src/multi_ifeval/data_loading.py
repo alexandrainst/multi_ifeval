@@ -29,7 +29,7 @@ def load_mapping_from_language_to_example_text() -> dict[str, str]:
     assert isinstance(repo_info, DatasetInfo), (
         f"Expected a DatasetInfo object, but got {type(repo_info)}"
     )
-    languages = repo_info.cardData.config_names
+    languages = [config["config_name"] for config in repo_info.cardData.configs]
 
     language_to_example_text: dict[str, str] = dict()
     for language in languages:
