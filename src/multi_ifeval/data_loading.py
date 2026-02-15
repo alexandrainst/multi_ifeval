@@ -9,6 +9,7 @@ from huggingface_hub import DatasetInfo, HfApi
 from tqdm.auto import tqdm
 
 from .data_models import Example
+from .languages import Language, get_all_languages
 
 
 def load_ifeval() -> list[Example]:
@@ -22,7 +23,7 @@ def load_ifeval() -> list[Example]:
     return examples
 
 
-def load_mapping_from_language_to_example_text() -> dict[str, str]:
+def load_mapping_from_language_to_example_text() -> dict[Language, str]:
     """Load a sample text for each language from the MultiWikiQA dataset.
 
     Returns:
@@ -31,29 +32,38 @@ def load_mapping_from_language_to_example_text() -> dict[str, str]:
     mapping_path = Path("data", "mapping_from_language_to_example_text.json")
     mapping_path.parent.mkdir(exist_ok=True, parents=True)
 
+    language_code_to_language = get_all_languages()
+
     # Get the list of language codes in MultiWikiQA
     api = HfApi()
     repo_info = api.repo_info("alexandrainst/multi-wiki-qa", repo_type="dataset")
     assert isinstance(repo_info, DatasetInfo), (
         f"Expected a DatasetInfo object, but got {type(repo_info)}"
     )
-    languages = [config["config_name"] for config in repo_info.cardData.configs]
+    languages = [
+        language_code_to_language[config["config_name"]]
+        for config in repo_info.cardData.configs
+        if config["config_name"] in language_code_to_language
+    ]
 
-    language_to_example_text: dict[str, str] = dict()
+    language_code_to_example_text: dict[str, str] = dict()
     if mapping_path.exists():
         with mapping_path.open() as file:
-            language_to_example_text = json.load(file)
+            language_code_to_example_text = json.load(file)
 
     for language in tqdm(
         iterable=languages,
         desc="Loading sample text for each language",
         unit="language",
     ):
-        if language in language_to_example_text:
+        if language.code in language_code_to_example_text:
             continue
 
         dataset = load_dataset(
-            "alexandrainst/multi-wiki-qa", name=language, split="train", streaming=True
+            "alexandrainst/multi-wiki-qa",
+            name=language.code,
+            split="train",
+            streaming=True,
         )
         assert isinstance(dataset, IterableDataset), (
             f"Expected an IterableDataset object, but got {type(dataset)}"
@@ -72,8 +82,10 @@ def load_mapping_from_language_to_example_text() -> dict[str, str]:
                 1 for char in example_text if char in punctuation
             ) / len(example_text)
 
-        language_to_example_text[language] = example_text
+        language_code_to_example_text[language.code] = example_text
         with mapping_path.open("w") as file:
-            json.dump(language_to_example_text, file, indent=2, ensure_ascii=False)
+            json.dump(language_code_to_example_text, file, indent=2, ensure_ascii=False)
 
-    return language_to_example_text
+    return {
+        language: language_code_to_example_text[language.code] for language in languages
+    }

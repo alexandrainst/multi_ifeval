@@ -47,4 +47,7 @@ def generate(
     )
     completion = choice.message.content
     assert completion is not None, f"The model did not return a completion: {response}"
+
+    if response_model is not None:
+        return response_model.model_validate_json(completion)
     return completion

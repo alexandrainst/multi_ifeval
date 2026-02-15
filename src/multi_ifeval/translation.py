@@ -3,11 +3,12 @@
 from textwrap import dedent
 
 from .data_models import Example
+from .languages import Language
 from .llm import generate
 
 
 def translate_example(
-    example: Example, language: str, language_example: str, model: str
+    example: Example, language: Language, language_example: str, model: str
 ) -> Example:
     """Translate an instruction-following example to a different language.
 
@@ -25,7 +26,8 @@ def translate_example(
         The translated example.
     """
     prompt = dedent(f"""
-        You are a professional translator from 'en' to {language}.
+        You are a professional translator from English to {language.name} (language
+        code: {language.code!r}).
 
         Here is an instruction-following example in 'en':
 
@@ -33,10 +35,10 @@ def translate_example(
         {example.model_dump_json()}
         </example>
 
-        You need to translate the example to {language!r}. This means the following:
+        You need to translate the example to {language.name}. This means the following:
 
         1. The `key` should remain the same.
-        2. The `prompt` should be translated to {language!r}. If the prompt concerns
+        2. The `prompt` should be translated to {language.name}. If the prompt concerns
            landmarks or individuals specific to USA or to the English language, you
            should localise these to the target language and culture.
         3. The `instruction_id_list` should only be translated if the instruction IDs
@@ -46,13 +48,13 @@ def translate_example(
         4. The `kwargs` are the keyword arguments for the instruction functions related
            to the instruction IDs in the `instruction_id_list`. These should remain
            unchanged unless they contain 'en' words, in which case they should be
-           translated to {language!r}.
+           translated to {language.name}.
 
-        Here is an example of some text written in {language!r}:
+        Here is an example of some text written in {language.name}:
 
-        <text-written-in-target-language>
+        <{language.code}-example>
         {language_example}
-        </text-written-in-target-language>
+        </{language.code}-example>
 
         You should return the translated example in JSON format, with the same structure
         as the original example:
