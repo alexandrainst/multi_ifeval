@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from string import punctuation
 
 from datasets import IterableDataset, load_dataset
 from huggingface_hub import DatasetInfo, HfApi
@@ -58,11 +59,21 @@ def load_mapping_from_language_to_example_text() -> dict[str, str]:
             f"Expected an IterableDataset object, but got {type(dataset)}"
         )
 
-        example = next(iter(dataset))["context"]
-        assert isinstance(example, str), f"Expected a string, but got {type(example)}"
+        # Keep trying to fetch examples until we find an example which is not full of
+        # special symbols, such as tables
+        itr = iter(dataset)
+        example_text: str = next(itr)["context"]
+        special_symbol_fraction = sum(
+            1 for char in example_text if char in punctuation
+        ) / len(example_text)
+        while special_symbol_fraction > 0.05:
+            example_text = next(itr)["context"]
+            special_symbol_fraction = sum(
+                1 for char in example_text if char in punctuation
+            ) / len(example_text)
 
-        language_to_example_text[language] = example
+        language_to_example_text[language] = example_text
         with mapping_path.open("w") as file:
-            json.dump(language_to_example_text, file, indent=2)
+            json.dump(language_to_example_text, file, indent=2, ensure_ascii=False)
 
     return language_to_example_text
