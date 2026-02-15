@@ -7,6 +7,7 @@ Usage:
 from pathlib import Path
 
 import click
+from datasets import disable_progress_bars
 from dotenv import load_dotenv
 from tqdm.auto import tqdm
 
@@ -29,6 +30,8 @@ load_dotenv()
 )
 def main(model: str) -> None:
     """Translate the IFEval dataset to different languages."""
+    disable_progress_bars()
+
     output_dir = Path("data")
     output_dir.mkdir(exist_ok=True)
 
