@@ -11,7 +11,6 @@ from datasets import disable_progress_bars
 from dotenv import load_dotenv
 from tqdm.auto import tqdm
 
-from multi_ifeval.constants import LANGUAGES_COVERED_BY_LINGUA
 from multi_ifeval.data_loading import (
     load_ifeval,
     load_mapping_from_language_to_example_text,
@@ -39,12 +38,9 @@ def main(model: str) -> None:
     examples = load_ifeval()
 
     language_to_example_text = load_mapping_from_language_to_example_text()
-    languages_covered = set(LANGUAGES_COVERED_BY_LINGUA).intersection(
-        set(language_to_example_text.keys())
-    )
 
-    for language in tqdm(
-        iterable=languages_covered,
+    for language, example_text in tqdm(
+        iterable=language_to_example_text.items(),
         desc="Translating datasets",
         total=len(language_to_example_text),
         unit="dataset",
@@ -53,7 +49,7 @@ def main(model: str) -> None:
             translate_example(
                 example=example,
                 language=language,
-                language_example=language_to_example_text[language],
+                language_example=example_text,
                 model=model,
             )
             for example in tqdm(
