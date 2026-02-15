@@ -8,7 +8,6 @@ from datasets import IterableDataset, load_dataset
 from huggingface_hub import DatasetInfo, HfApi
 from tqdm.auto import tqdm
 
-from .constants import LANGUAGES_COVERED_BY_LINGUA
 from .data_models import Example
 from .languages import Language, get_all_languages
 
@@ -45,8 +44,6 @@ def load_mapping_from_language_to_example_text() -> dict[Language, str]:
         language_code_to_language[config["config_name"]]
         for config in repo_info.cardData.configs
         if config["config_name"] in language_code_to_language
-        and language_code_to_language[config["config_name"]]
-        in LANGUAGES_COVERED_BY_LINGUA
     ]
 
     language_code_to_example_text: dict[str, str] = dict()

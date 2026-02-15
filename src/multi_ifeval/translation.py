@@ -2,6 +2,7 @@
 
 from textwrap import dedent
 
+from .constants import LANGUAGES_COVERED_BY_LINGUA
 from .data_models import Example
 from .languages import Language
 from .llm import generate
@@ -25,6 +26,19 @@ def translate_example(
     Returns:
         The translated example.
     """
+    translation_condition = (
+        (
+            "\n"
+            "5. Note that the {language.name} language detection is not covered by "
+            "   language detection software, so if one of the instruction IDs mentions "
+            "   language detection in the source language (English), you have to "
+            "   remove that instruction ID from the output instruction_id_list and "
+            "   remove mention of that restriction from the output prompt."
+        )
+        if language not in LANGUAGES_COVERED_BY_LINGUA
+        else ""
+    )
+
     prompt = dedent(f"""
         You are a professional translator from English to {language.name} (language
         code: {language.code!r}).
@@ -48,7 +62,7 @@ def translate_example(
         4. The `kwargs` are the keyword arguments for the instruction functions related
            to the instruction IDs in the `instruction_id_list`. These should remain
            unchanged unless they contain 'en' words, in which case they should be
-           translated to {language.name}.
+           translated to {language.name}.{translation_condition}
 
         Here is an example of some text written in {language.name}:
 
