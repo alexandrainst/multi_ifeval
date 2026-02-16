@@ -77,23 +77,17 @@ def main(model: str) -> None:
                 f"Expected a Dataset, but got {type(dataset)}"
             )
 
-            error_msgs: list[str] = list()
-            for _ in range(num_attempts := 3):
-                try:
-                    translated_example = translate_example(
-                        example=example,
-                        language=language,
-                        language_example=example_text,
-                        model=model,
-                    )
-                    break
-                except Exception as e:
-                    error_msgs.append(str(e))
-            else:
+            try:
+                translated_example = translate_example(
+                    example=example,
+                    language=language,
+                    language_example=example_text,
+                    model=model,
+                )
+            except Exception as e:
                 warnings.warn(
-                    f"Failed to translate example {example.key} to {language.name}, "
-                    f"after {num_attempts} attempts. Skipping. Here are the errors "
-                    f"that occurred:\n{error_msgs}"
+                    f"Failed to translate example {example.key} to {language.name}. "
+                    f"Skipping. Here are the errors that occurred:\n{e}"
                 )
                 continue
 
