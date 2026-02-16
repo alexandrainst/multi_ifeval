@@ -20,6 +20,11 @@ def load_ifeval() -> list[Example]:
     """
     dataset = load_dataset("google/IFEval", split="train")
     examples = [Example.model_validate(example) for example in dataset]
+    for example in examples:
+        example.kwargs = [
+            {key: value for key, value in kwargs.items() if value is not None}
+            for kwargs in example.kwargs
+        ]
     return examples
 
 

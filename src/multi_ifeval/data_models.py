@@ -16,7 +16,7 @@ class Kwarg(BaseModel):
     """A keyword argument for an instruction function."""
 
     name: str
-    value: str | int | float | bool | list[str] | None
+    value: str | int | float | bool | list[str]
 
 
 class GeneratedExample(BaseModel):
