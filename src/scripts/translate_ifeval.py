@@ -62,11 +62,23 @@ def main(model: str) -> None:
             special_symbol_fraction = sum(
                 1 for char in example_text if char in punctuation
             ) / len(example_text)
-            while special_symbol_fraction > 0.05:
+
+            # Ensure that the example text is not full of special symbols like tables
+            best_example_text = example_text
+            best_special_symbol_fraction = special_symbol_fraction
+            for _ in range(10):
+                if special_symbol_fraction < 0.05:
+                    break
                 example_text = dataset.shuffle()[0]["context"]
                 special_symbol_fraction = sum(
                     1 for char in example_text if char in punctuation
                 ) / len(example_text)
+                if special_symbol_fraction < best_special_symbol_fraction:
+                    best_special_symbol_fraction = special_symbol_fraction
+                    best_example_text = example_text
+            else:
+                example_text = best_example_text
+
             assert isinstance(example_text, str), (
                 f"Expected a string, but got {type(example_text)}"
             )
