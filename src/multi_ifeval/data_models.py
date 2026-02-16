@@ -40,3 +40,8 @@ class GeneratedExample(BaseModel):
                 f"argument lists. Got {len(self.new_instruction_id_list)} "
                 f"instruction IDs and {len(self.new_kwargs)} keyword argument lists."
             )
+
+        self.new_kwargs = [
+            [kwarg for kwarg in kwarg_list if kwarg.value]
+            for kwarg_list in self.new_kwargs
+        ]
