@@ -91,7 +91,7 @@ def generate(
         else:
             raise RuntimeError(
                 f"Failed to validate the generated response after {num_attempts} "
-                "attempts: {completion}"
+                f"attempts: {completion}"
             )
 
     return completion
