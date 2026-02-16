@@ -110,3 +110,6 @@ models/*
 
 # Mkdocs compiled documentation
 site/
+
+# Generated files
+data/ifeval-*.jsonl
