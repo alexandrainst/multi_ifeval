@@ -4,7 +4,7 @@ from datasets import load_dataset
 from huggingface_hub import DatasetInfo, HfApi
 
 from .data_models import Example
-from .languages import DANISH, Language, get_all_languages
+from .languages import Language, get_all_languages
 
 
 def load_ifeval() -> list[Example]:
@@ -36,11 +36,10 @@ def load_languages() -> list[Language]:
     )
 
     language_code_to_language = get_all_languages()
-    [
+    languages = [
         language_code_to_language[config["config_name"]]
         for config in repo_info.cardData.configs
         if config["config_name"] in language_code_to_language
     ]
 
-    # TEMP
-    return [DANISH]  # return languages
+    return languages
