@@ -122,12 +122,17 @@ def translate_example(
         arguments for the corresponding instruction ID in the `new_instruction_id_list`.
     """).strip()
 
-    def validate_generated_example(generated_example: GeneratedExample) -> None:
+    def validate_generated_example(
+        generated_example: GeneratedExample,
+    ) -> GeneratedExample:
         """Validate the generated example.
 
         Args:
             generated_example:
                 The generated example.
+
+        Returns:
+            The generated example, potentially with some fixes applied.
 
         Raises:
             ValueError:
@@ -143,6 +148,12 @@ def translate_example(
                 f"{generated_example.new_instruction_id_list!r}."
             )
 
+        # If the kwargs are empty, we force them to be empty
+        generated_example.new_kwargs = [
+            [] if kwargs == {} else new_kwargs
+            for kwargs, new_kwargs in zip(example.kwargs, generated_example.new_kwargs)
+        ]
+
         for kwargs, generated_kwargs in zip(
             example.kwargs, generated_example.new_kwargs
         ):
@@ -152,6 +163,8 @@ def translate_example(
                     f"{list(kwargs.keys())!r}, but got "
                     f"{[kwarg.name for kwarg in generated_kwargs]!r}."
                 )
+
+        return generated_example
 
     generated_example = generate(
         prompt=prompt,

@@ -15,7 +15,7 @@ def generate(
     temperature: float,
     max_tokens: int,
     response_format: type[T] | None = None,
-    validation_fn: c.Callable[[T], None] = lambda x: None,
+    validation_fn: c.Callable[[T], T] = lambda x: x,
 ) -> str | T:
     """Generate a response to a prompt.
 
@@ -64,7 +64,7 @@ def generate(
         for _ in range(num_attempts := 10):
             try:
                 output = response_format.model_validate_json(completion)
-                validation_fn(output)
+                output = validation_fn(output)
                 return output
 
             except Exception as e:
