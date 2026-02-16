@@ -60,7 +60,7 @@ def generate(
     assert completion is not None, f"The model did not return a completion: {response}"
 
     if response_format is not None:
-        for _ in range(num_attempts := 3):
+        for _ in range(num_attempts := 10):
             try:
                 output = response_format.model_validate_json(completion)
                 validation_fn(output)
