@@ -5,17 +5,15 @@ Usage:
 """
 
 from pathlib import Path
+from string import punctuation
 
 import click
-from datasets import disable_progress_bars
+from datasets import Dataset, disable_progress_bars, load_dataset
 from dotenv import load_dotenv
 from tqdm.auto import tqdm
 
-from multi_ifeval.data_loading import (
-    load_ifeval,
-    load_mapping_from_language_to_example_text,
-)
-from multi_ifeval.languages import DANISH
+from multi_ifeval.data_loading import load_ifeval, load_languages
+from multi_ifeval.data_models import Example
 from multi_ifeval.translation import translate_example
 
 load_dotenv()
@@ -38,36 +36,54 @@ def main(model: str) -> None:
 
     examples = load_ifeval()
 
-    language_to_example_text = load_mapping_from_language_to_example_text()
-
-    # TEMP
-    language_to_example_text = {DANISH: language_to_example_text[DANISH]}
-    examples = examples[:10]
-
-    for language, example_text in tqdm(
-        iterable=language_to_example_text.items(),
-        desc="Translating datasets",
-        total=len(language_to_example_text),
-        unit="dataset",
+    for language in tqdm(
+        iterable=load_languages(), desc="Translating datasets", unit="dataset"
     ):
         language_output_path = output_dir / f"ifeval-{language.code}.jsonl"
         if language_output_path.exists():
             continue
-        translated_examples = [
-            translate_example(
+
+        dataset = load_dataset(
+            "alexandrainst/multi-wiki-qa", name=language.code, split="train"
+        )
+
+        translated_examples: list[Example] = list()
+        for example in tqdm(
+            iterable=examples,
+            desc=f"Translating examples to {language.name}",
+            total=len(examples),
+            unit="example",
+            leave=False,
+        ):
+            # Load the example text
+            example_text = dataset.shuffle()[0]["context"]
+            special_symbol_fraction = sum(
+                1 for char in example_text if char in punctuation
+            ) / len(example_text)
+            while special_symbol_fraction > 0.05:
+                example_text = dataset.shuffle()[0]["context"]
+                special_symbol_fraction = sum(
+                    1 for char in example_text if char in punctuation
+                ) / len(example_text)
+            assert isinstance(example_text, str), (
+                f"Expected a string, but got {type(example_text)}"
+            )
+
+            # Remove the example text from the dataset
+            dataset = dataset.filter(lambda x: x["context"] != example_text)
+            assert isinstance(dataset, Dataset), (
+                f"Expected a Dataset, but got {type(dataset)}"
+            )
+
+            # Translate the example
+            translated_example = translate_example(
                 example=example,
                 language=language,
                 language_example=example_text,
                 model=model,
             )
-            for example in tqdm(
-                iterable=examples,
-                desc=f"Translating examples to {language.name}",
-                total=len(examples),
-                unit="example",
-                leave=False,
-            )
-        ]
+            translated_examples.append(translated_example)
+
         with language_output_path.open("w") as f:
             for example in translated_examples:
                 f.write(example.model_dump_json() + "\n")
