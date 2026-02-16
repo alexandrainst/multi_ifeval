@@ -83,11 +83,13 @@ def main(model: str) -> None:
                 f"Expected a string, but got {type(example_text)}"
             )
 
-            # Remove the example text from the dataset
-            dataset = dataset.filter(lambda x: x["context"] != example_text)
-            assert isinstance(dataset, Dataset), (
-                f"Expected a Dataset, but got {type(dataset)}"
-            )
+            # Remove the example text from the dataset, unless it's the last example
+            filtered_dataset = dataset.filter(lambda x: x["context"] != example_text)
+            if len(filtered_dataset) > 1:
+                dataset = filtered_dataset
+                assert isinstance(dataset, Dataset), (
+                    f"Expected a Dataset, but got {type(dataset)}"
+                )
 
             try:
                 translated_example = translate_example(
