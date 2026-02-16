@@ -79,10 +79,6 @@ setup-git:
 test:  ## Run tests
 	@uv run pytest && uv run readme-cov
 
-docker:  ## Build Docker image and run container
-	@docker build -t multi_ifeval .
-	@docker run -it --rm multi_ifeval
-
 tree:  ## Print directory tree
 	@tree -a --gitignore -I .git .
 
