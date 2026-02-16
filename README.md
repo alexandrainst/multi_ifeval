@@ -36,6 +36,6 @@ Developer:
 ### Quickstart
 
 Run `uv run src/scripts/translate_ifeval.py` to translate the IFEval dataset to
-different languages. By default this uses the Gemini 3 Pro Preview model, which requires
+different languages. By default this uses the Gemini-3-flash model, which requires
 you to have set the `GEMINI_API_KEY` environment variable. You can also specify a
 different model with the `--model` flag.
