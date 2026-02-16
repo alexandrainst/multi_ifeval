@@ -59,6 +59,7 @@ def generate(
     completion = choice.message.content
     assert completion is not None, f"The model did not return a completion: {response}"
 
+    error_msgs: list[str] = list()
     if response_format is not None:
         for _ in range(num_attempts := 10):
             try:
@@ -67,6 +68,7 @@ def generate(
                 return output
 
             except Exception as e:
+                error_msgs.append(str(e))
                 conversation.extend(
                     [
                         dict(role="assistant", content=completion),
@@ -91,7 +93,10 @@ def generate(
         else:
             raise RuntimeError(
                 f"Failed to validate the generated response after {num_attempts} "
-                f"attempts: {completion}"
+                "attempts. Here is the final completion attempt:\n"
+                f"{completion}\n\n"
+                "Here are the errors that occurred:\n"
+                f"{error_msgs}"
             )
 
     return completion
