@@ -26,7 +26,7 @@ def translate_example(
     Returns:
         The translated example.
     """
-    # Change the instruction IDs manually
+    # Deal with language check instruction IDs
     if language not in LANGUAGES_COVERED_BY_LINGUA:
         example.instruction_id_list = [
             instruction_id.replace("english_", "")
@@ -56,6 +56,29 @@ def translate_example(
 
         example.instruction_id_list = new_instruction_id_list
         example.kwargs = new_kwargs
+
+    # Replace the English hardcoded 'detectable_format:constrained_response' instruction
+    # with a more flexible one
+    if "detectable_format:constrained_response" in example.instruction_id_list:
+        new_instruction_id_list: list[str] = list()
+        new_kwargs: list[dict[str, str | int | float | bool | list[str] | None]] = []
+        for instruction_id, kwargs in zip(example.instruction_id_list, example.kwargs):
+            if instruction_id == "detectable_format:constrained_response":
+                new_instruction_id_list.append(
+                    "detectable_format:constrained_response_with_argument"
+                )
+                new_kwargs.append(
+                    dict(
+                        options=[
+                            "My answer is yes.",
+                            "My answer is no.",
+                            "My answer is maybe.",
+                        ]
+                    )
+                )
+            else:
+                new_instruction_id_list.append(instruction_id)
+                new_kwargs.append(kwargs)
 
     prompt = dedent(f"""
         You are a professional translator from English to {language.name} (language
