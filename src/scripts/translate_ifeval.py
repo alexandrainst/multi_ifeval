@@ -25,7 +25,7 @@ load_dotenv()
     "--model",
     "-m",
     type=str,
-    default="gemini/gemini-3-pro-preview",
+    default="gemini/gemini-3-flash-preview",
     help="The model to use for translation.",
 )
 def main(model: str) -> None:
