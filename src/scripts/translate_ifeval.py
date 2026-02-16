@@ -9,7 +9,7 @@ from pathlib import Path
 from string import punctuation
 
 import click
-from datasets import Dataset, disable_progress_bars, load_dataset
+from datasets import Dataset, DownloadConfig, load_dataset
 from dotenv import load_dotenv
 from tqdm.auto import tqdm
 
@@ -29,8 +29,6 @@ load_dotenv()
 )
 def main(model: str) -> None:
     """Translate the IFEval dataset to different languages."""
-    disable_progress_bars()
-
     output_dir = Path("data")
     output_dir.mkdir(exist_ok=True)
 
@@ -44,7 +42,10 @@ def main(model: str) -> None:
             continue
 
         dataset = load_dataset(
-            "alexandrainst/multi-wiki-qa", name=language.code, split="train"
+            "alexandrainst/multi-wiki-qa",
+            name=language.code,
+            split="train",
+            download_config=DownloadConfig(disable_tqdm=True),
         )
 
         for example in tqdm(
