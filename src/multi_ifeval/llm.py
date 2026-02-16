@@ -61,7 +61,7 @@ def generate(
 
     error_msgs: list[str] = list()
     if response_format is not None:
-        for _ in range(num_attempts := 10):
+        for _ in range(num_attempts := 3):
             try:
                 output = response_format.model_validate_json(completion)
                 output = validation_fn(output)
