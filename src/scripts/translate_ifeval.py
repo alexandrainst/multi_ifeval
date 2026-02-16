@@ -15,6 +15,7 @@ from multi_ifeval.data_loading import (
     load_ifeval,
     load_mapping_from_language_to_example_text,
 )
+from multi_ifeval.languages import DANISH
 from multi_ifeval.translation import translate_example
 
 load_dotenv()
@@ -38,6 +39,10 @@ def main(model: str) -> None:
     examples = load_ifeval()
 
     language_to_example_text = load_mapping_from_language_to_example_text()
+
+    # TEMP
+    language_to_example_text = {DANISH: language_to_example_text[DANISH]}
+    examples = examples[:10]
 
     for language, example_text in tqdm(
         iterable=language_to_example_text.items(),

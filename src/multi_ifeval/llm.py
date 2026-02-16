@@ -1,10 +1,10 @@
 """Generation with a large language model."""
 
+import collections.abc as c
 import typing as t
 
 import litellm
 from litellm import Choices, ModelResponse
-from pydantic import ValidationError
 
 T = t.TypeVar("T")
 
@@ -15,6 +15,7 @@ def generate(
     temperature: float,
     max_tokens: int,
     response_format: type[T] | None = None,
+    validation_fn: c.Callable[[T], None] = lambda x: None,
 ) -> str | T:
     """Generate a response to a prompt.
 
@@ -30,6 +31,8 @@ def generate(
         response_format (optional):
             The model to use for generation. If None then the response is returned as a
             string. Defaults to None.
+        validation_fn (optional):
+            A function that validates the response. Defaults to no validation.
 
     Returns:
         The generated response, which is a Pydantic model if `response_format` is set,
@@ -59,8 +62,11 @@ def generate(
     if response_format is not None:
         for _ in range(num_attempts := 3):
             try:
-                return response_format.model_validate_json(completion)
-            except ValidationError as e:
+                output = response_format.model_validate_json(completion)
+                validation_fn(output)
+                return output
+
+            except Exception as e:
                 conversation.extend(
                     [
                         dict(role="assistant", content=completion),

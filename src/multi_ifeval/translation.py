@@ -26,16 +26,36 @@ def translate_example(
     Returns:
         The translated example.
     """
-    translation_condition = (
-        f"""
-        4. Note that the {language.name} language detection is not covered by language
-           detection software, so if one of the instruction IDs mentions language
-           detection in the source language (English), you have to remove that
-           instruction ID from the output instruction_id_list and remove mention of that
-           restriction from the output prompt."""
-        if language not in LANGUAGES_COVERED_BY_LINGUA
-        else ""
-    )
+    # Change the instruction IDs manually
+    if language not in LANGUAGES_COVERED_BY_LINGUA:
+        example.instruction_id_list = [
+            instruction_id.replace("english_", "")
+            for instruction_id, kwargs in zip(
+                example.instruction_id_list, example.kwargs
+            )
+            if instruction_id != "language:response_language"
+        ]
+    else:
+        new_instruction_id_list: list[str] = list()
+        new_kwargs: list[dict[str, str | int | float | bool | list[str] | None]] = []
+        for instruction_id, kwargs in zip(example.instruction_id_list, example.kwargs):
+            if "english_" in instruction_id:
+                new_instruction_id_list.extend(
+                    [
+                        instruction_id.replace("english_", ""),
+                        "language:response_language",
+                    ]
+                )
+                new_kwargs.extend([kwargs, dict(language=language.code)])
+            elif instruction_id == "language:response_language":
+                new_instruction_id_list.append(instruction_id)
+                new_kwargs.append(dict(language=language.code))
+            else:
+                new_instruction_id_list.append(instruction_id)
+                new_kwargs.append(kwargs)
+
+        example.instruction_id_list = new_instruction_id_list
+        example.kwargs = new_kwargs
 
     prompt = dedent(f"""
         You are a professional translator from English to {language.name} (language
@@ -49,17 +69,12 @@ def translate_example(
 
         You need to translate the example to {language.name}. This means the following:
 
-        1. The `prompt` should be translated to {language.name}. If the prompt concerns
-           landmarks or individuals specific to USA or to the English language, you
-           should localise these to the target language and culture.
-        2. The `instruction_id_list` should only be translated if the instruction IDs
-           specifically mention the English language. The ID itself should remain in
-           English. In almost all cases, the `instruction_id_list` should remain
-           unchanged.
-        3. The `kwargs` are the keyword arguments for the instruction functions related
-           to the instruction IDs in the `instruction_id_list`. These should remain
-           unchanged unless they contain English words, in which case they should be
-           translated to {language.name}.{translation_condition}
+        1. The `prompt` should be translated to {language.name}. You should localise
+           these to {language.name} and its country's culture.
+        2. The `instruction_id_list` should remain exactly the same.
+        3. The keys in the kwargs dictionaries should be completely unchanged, and the
+           values should _only_ be changed if they contain English words or phrases,
+           which would need to be changed to the equivalent in {language.name}.
 
         Here is an example of some text written in {language.name}:
 
@@ -81,12 +96,44 @@ def translate_example(
         arguments for the corresponding instruction ID in the `new_instruction_id_list`.
     """).strip()
 
+    def validate_generated_example(generated_example: GeneratedExample) -> None:
+        """Validate the generated example.
+
+        Args:
+            generated_example:
+                The generated example.
+
+        Raises:
+            ValueError:
+                If the generated example is invalid.
+        """
+        instruction_ids_are_unchanged = (
+            example.instruction_id_list == generated_example.new_instruction_id_list
+        )
+        if not instruction_ids_are_unchanged:
+            raise ValueError(
+                f"The instruction IDs were not unchanged. Expected "
+                f"{example.instruction_id_list!r}, but got "
+                f"{generated_example.new_instruction_id_list!r}."
+            )
+
+        for kwargs, generated_kwargs in zip(
+            example.kwargs, generated_example.new_kwargs
+        ):
+            if list(kwargs.keys()) != [kwarg.name for kwarg in generated_kwargs]:
+                raise ValueError(
+                    f"The keyword argument names were not unchanged. Expected "
+                    f"{list(kwargs.keys())!r}, but got "
+                    f"{[kwarg.name for kwarg in generated_kwargs]!r}."
+                )
+
     generated_example = generate(
         prompt=prompt,
         model=model,
         temperature=0.0,
         max_tokens=2048,
         response_format=GeneratedExample,
+        validation_fn=validate_generated_example,
     )
     return Example(
         key=example.key,
