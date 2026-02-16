@@ -41,7 +41,7 @@ def translate_example(
         You are a professional translator from English to {language.name} (language
         code: {language.code!r}).
 
-        Here is an instruction-following example in 'en':
+        Here is an instruction-following example in English:
 
         <example>
         {example.model_dump_json()}
@@ -58,7 +58,7 @@ def translate_example(
            unchanged.
         3. The `kwargs` are the keyword arguments for the instruction functions related
            to the instruction IDs in the `instruction_id_list`. These should remain
-           unchanged unless they contain 'en' words, in which case they should be
+           unchanged unless they contain English words, in which case they should be
            translated to {language.name}.{translation_condition}
 
         Here is an example of some text written in {language.name}:
