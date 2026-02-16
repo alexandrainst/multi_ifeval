@@ -80,6 +80,9 @@ def translate_example(
                 new_instruction_id_list.append(instruction_id)
                 new_kwargs.append(kwargs)
 
+        example.instruction_id_list = new_instruction_id_list
+        example.kwargs = new_kwargs
+
     prompt = dedent(f"""
         You are a professional translator from English to {language.name} (language
         code: {language.code!r}).
