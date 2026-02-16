@@ -69,6 +69,7 @@ def generate(
 
             except Exception as e:
                 error_msgs.append(str(e))
+
                 conversation.extend(
                     [
                         dict(role="assistant", content=completion),

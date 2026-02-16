@@ -4,6 +4,7 @@ Usage:
     uv run src/scripts/translate_ifeval.py [--model MODEL]
 """
 
+import warnings
 from pathlib import Path
 from string import punctuation
 
@@ -73,12 +74,26 @@ def main(model: str) -> None:
                 f"Expected a Dataset, but got {type(dataset)}"
             )
 
-            translated_example = translate_example(
-                example=example,
-                language=language,
-                language_example=example_text,
-                model=model,
-            )
+            error_msgs: list[str] = list()
+            for _ in range(num_attempts := 3):
+                try:
+                    translated_example = translate_example(
+                        example=example,
+                        language=language,
+                        language_example=example_text,
+                        model=model,
+                    )
+                    break
+                except Exception as e:
+                    error_msgs.append(str(e))
+            else:
+                warnings.warn(
+                    f"Failed to translate example {example.key} to {language.name}, "
+                    f"after {num_attempts} attempts. Skipping. Here are the errors "
+                    f"that occurred:\n{error_msgs}"
+                )
+                continue
+
             with language_output_path.open("a") as f:
                 f.write(translated_example.model_dump_json() + "\n")
 
