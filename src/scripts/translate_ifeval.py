@@ -45,6 +45,9 @@ def main(model: str) -> None:
         total=len(language_to_example_text),
         unit="dataset",
     ):
+        language_output_path = output_dir / f"ifeval-{language.code}.jsonl"
+        if language_output_path.exists():
+            continue
         translated_examples = [
             translate_example(
                 example=example,
@@ -60,7 +63,6 @@ def main(model: str) -> None:
                 leave=False,
             )
         ]
-        language_output_path = output_dir / f"ifeval-{language.code}.jsonl"
         with language_output_path.open("w") as f:
             for example in translated_examples:
                 f.write(example.model_dump_json() + "\n")
