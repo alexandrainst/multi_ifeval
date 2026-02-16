@@ -1,6 +1,6 @@
 # This ensures that we can call `make <target>` even if `<target>` exists as a file or
 # directory.
-.PHONY: docs help
+.PHONY: help
 
 # Exports all variables defined in the makefile available to scripts
 .EXPORT_ALL_VARIABLES:
@@ -33,7 +33,6 @@ install: ## Install dependencies
 	@$(MAKE) --quiet setup-environment-variables
 	@$(MAKE) --quiet setup-git
 	@$(MAKE) --quiet install-pre-commit
-	@$(MAKE) --quiet add-repo-to-git
 	@echo "Installed the 'multi_ifeval' project! You can now activate your virtual environment with 'source .venv/bin/activate'."
 	@echo "Note that this is a 'uv' project. Use 'uv add <package>' to install new dependencies and 'uv remove <package>' to remove them."
 
@@ -43,7 +42,6 @@ install-non-interactive:
 	@$(MAKE) --quiet setup-environment-variables-non-interactive
 	@$(MAKE) --quiet setup-git
 	@$(MAKE) --quiet install-pre-commit
-	@$(MAKE) --quiet add-repo-to-git
 
 install-uv:
 	@if [ "$(shell which uv)" = "" ]; then \
@@ -77,23 +75,6 @@ setup-git:
 	@git init
 	@git config --local user.name "${GIT_NAME}"
 	@git config --local user.email "${GIT_EMAIL}"
-
-add-repo-to-git:
-	@if [ ! "$(shell git status --short)" = "" ] && [ "$(shell git --no-pager log --all | sed 's/`//g')" = "" ]; then \
-		git add .; \
-		git commit --quiet -m "Initial commit"; \
-	fi
-	@if [ "$(shell git remote)" = "" ]; then \
-		git remote add origin git@github.com:alexandrainst/multi_ifeval.git; \
-	fi
-
-docs:  ## View documentation locally
-	@echo "Viewing documentation - run 'make publish-docs' to publish the documentation website."
-	@uv run mkdocs serve
-
-publish-docs:  ## Publish documentation to GitHub Pages
-	@uv run mkdocs gh-deploy
-	@echo "Updated documentation website: https://alexandrainst.github.io/multi_ifeval"
 
 test:  ## Run tests
 	@uv run pytest && uv run readme-cov
