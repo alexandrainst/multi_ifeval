@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 from tqdm.auto import tqdm
 
 from multi_ifeval.data_loading import load_ifeval, load_languages
-from multi_ifeval.data_models import Example
 from multi_ifeval.translation import translate_example
 
 load_dotenv()
@@ -47,7 +46,6 @@ def main(model: str) -> None:
             "alexandrainst/multi-wiki-qa", name=language.code, split="train"
         )
 
-        translated_examples: list[Example] = list()
         for example in tqdm(
             iterable=examples,
             desc=f"Translating examples to {language.name}",
@@ -75,18 +73,14 @@ def main(model: str) -> None:
                 f"Expected a Dataset, but got {type(dataset)}"
             )
 
-            # Translate the example
             translated_example = translate_example(
                 example=example,
                 language=language,
                 language_example=example_text,
                 model=model,
             )
-            translated_examples.append(translated_example)
-
-        with language_output_path.open("w") as f:
-            for example in translated_examples:
-                f.write(example.model_dump_json() + "\n")
+            with language_output_path.open("a") as f:
+                f.write(translated_example.model_dump_json() + "\n")
 
 
 if __name__ == "__main__":
