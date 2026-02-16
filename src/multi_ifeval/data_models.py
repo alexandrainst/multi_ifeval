@@ -1,6 +1,6 @@
 """Data models used in the project."""
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 
 class Example(BaseModel):
@@ -30,12 +30,12 @@ class GeneratedExample(BaseModel):
         """Validation after the model is initialized.
 
         Raises:
-            ValidationError:
+            ValueError:
                 If the number of instruction IDs does not match the number of keyword
                 argument lists.
         """
         if len(self.new_instruction_id_list) != len(self.new_kwargs):
-            raise ValidationError(
+            raise ValueError(
                 "The number of instruction IDs must match the number of keyword "
                 f"argument lists. Got {len(self.new_instruction_id_list)} "
                 f"instruction IDs and {len(self.new_kwargs)} keyword argument lists."
