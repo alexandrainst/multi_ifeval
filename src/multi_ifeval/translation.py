@@ -26,18 +26,25 @@ def translate_example(
     Returns:
         The translated example.
     """
-    # Deal with language check instruction IDs
+    new_instruction_id_list: list[str]
+    new_kwargs: list[dict[str, str | int | float | bool | list[str] | None]]
+
     if language not in LANGUAGES_COVERED_BY_LINGUA:
-        example.instruction_id_list = [
+        new_instruction_id_list = [
             instruction_id.replace("english_", "")
+            for instruction_id in example.instruction_id_list
+            if instruction_id != "language:response_language"
+        ]
+        new_kwargs = [
+            kwargs
             for instruction_id, kwargs in zip(
                 example.instruction_id_list, example.kwargs
             )
             if instruction_id != "language:response_language"
         ]
     else:
-        new_instruction_id_list: list[str] = list()
-        new_kwargs: list[dict[str, str | int | float | bool | list[str] | None]] = []
+        new_instruction_id_list = list()
+        new_kwargs = list()
         for instruction_id, kwargs in zip(example.instruction_id_list, example.kwargs):
             if "english_" in instruction_id:
                 new_instruction_id_list.extend(
@@ -54,8 +61,8 @@ def translate_example(
                 new_instruction_id_list.append(instruction_id)
                 new_kwargs.append(kwargs)
 
-        example.instruction_id_list = new_instruction_id_list
-        example.kwargs = new_kwargs
+    example.instruction_id_list = new_instruction_id_list
+    example.kwargs = new_kwargs
 
     # Replace the English hardcoded 'detectable_format:constrained_response' instruction
     # with a more flexible one
