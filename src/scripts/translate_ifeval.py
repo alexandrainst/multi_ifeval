@@ -105,6 +105,9 @@ def main(model: str) -> None:
                 )
                 continue
 
+            if not translated_example.instruction_id_list:
+                continue
+
             with language_output_path.open("a") as f:
                 f.write(translated_example.model_dump_json() + "\n")
 
