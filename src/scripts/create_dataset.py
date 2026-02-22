@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import bits_and_bobs as bnb
+import pandas as pd
 from datasets import Dataset
 from tqdm.auto import tqdm
 
@@ -25,7 +26,8 @@ def main() -> None:
                 if line.strip()
             ]
 
-        dataset = Dataset.from_list(examples)
+        df = pd.DataFrame.from_records(examples, index="key")
+        dataset = Dataset.from_pandas(df)
 
         language_code = jsonl_path.stem.split("-")[-1]
         with bnb.no_terminal_output():
