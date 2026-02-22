@@ -58,7 +58,7 @@ def main() -> None:
             logger.error(f"Failed to create dataset from {jsonl_path}: {e}. Skipping.")
             continue
 
-        for _ in range(num_attempts := 5):
+        for _ in range(num_attempts := 60):
             try:
                 with bnb.no_terminal_output():
                     dataset.push_to_hub(
