@@ -6,6 +6,7 @@ from pathlib import Path
 import bits_and_bobs as bnb
 import pandas as pd
 from datasets import Dataset
+from huggingface_hub import HfApi
 from huggingface_hub.errors import HfHubHTTPError
 from loguru import logger
 from tqdm.auto import tqdm
@@ -22,11 +23,27 @@ def main() -> None:
     """
     target_repo = "alexandrainst/multi-ifeval"
 
+    api = HfApi()
+    existing_subsets = (
+        list()
+        if not api.repo_exists(repo_id=target_repo, repo_type="dataset")
+        else [
+            config_dict["config_name"]
+            for config_dict in api.repo_info(
+                repo_id=target_repo, repo_type="dataset"
+            ).cardData.configs
+        ]
+    )
+
     for jsonl_path in tqdm(
         iterable=list(Path("data").glob("*.jsonl")),
         desc="Creating dataset subsets",
         unit="subset",
     ):
+        language_code = jsonl_path.stem.split("-")[-1]
+        if language_code in existing_subsets:
+            logger.info(f"{language_code} already exists. Skipping.")
+
         with jsonl_path.open() as f:
             examples = [
                 Example.model_validate_json(line).model_dump()
@@ -41,7 +58,6 @@ def main() -> None:
             logger.error(f"Failed to create dataset from {jsonl_path}: {e}. Skipping.")
             continue
 
-        language_code = jsonl_path.stem.split("-")[-1]
         for _ in range(num_attempts := 5):
             try:
                 with bnb.no_terminal_output():
@@ -54,7 +70,7 @@ def main() -> None:
                     )
                     break
             except HfHubHTTPError as e:
-                if e.status_code == 429:
+                if "429" in str(e):
                     logger.warning(
                         f"Rate limit exceeded for {language_code}. Waiting a minute "
                         "and retrying."
