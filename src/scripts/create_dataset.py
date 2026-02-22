@@ -52,6 +52,7 @@ def main() -> None:
                         private=True,
                         commit_message=f"Add {language_code}",
                     )
+                    break
             except HfHubHTTPError as e:
                 if e.status_code == 429:
                     logger.warning(
