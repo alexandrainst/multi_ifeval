@@ -113,3 +113,15 @@ site/
 
 # Generated files
 data/ifeval-*.jsonl
+
+# LaTeX
+**/*.aux
+**/*.bbl
+**/*.blg
+**/*.log
+**/*.out
+**/*.toc
+**/*.fdb_latexmk
+**/*.fls
+**/*.synctex.gz
+**/*.bst

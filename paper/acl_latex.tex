@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera‑ready)
+% version. Change to "preprint" to generate a non‑anonymous version with page numbers.
+\usepackage[review]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including
+% in bib files). See https://www.latex-project.org/help/documentation/encguide.pdf for
+% other character sets
+\usepackage[T1]{fontenc}
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out, but it will improve the
+% layout of the manuscript, and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out. However, it will
+% improve the aesthetics of text in the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding additional package(s)
+\usepackage{graphicx}
+
+
+\title{MultiIFEval: An Instruction Following Benchmark in 304 Languages}
+
+\author{Dan Saattrup Smart \\
+  Alexandra Institute \\
+  \texttt{dan.smart@alexandra.dk}\\
+}
+
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+
+We introduce MultiIFEval, a large‑scale instruction‑following benchmark that spans 304
+languages. Starting from the English IFEval dataset, we translate and localise each
+prompt–response pair into 304 target languages using Gemini‑3‑flash‑preview.
+
+We also create a new manually translated and localised Danish variant of the dataset,
+and conduct manual expert validation on the quality difference between the machine
+translated version of the dataset and the manually translated version, which showed that
+TODO. We also evaluated models on both the machine translated and manually translated
+versions of the Danish, Estonian and French versions of the dataset, showing that TODO.
+
+Lastly, we evaluate XXX models on all 304 languages of the dataset, showing that TODO.
+
+\end{abstract}
+
+
+\section{Introduction}
+\label{sec:intro}
+
+Instruction following evaluation has become central to developing practical AI systems
+capable of understanding and executing natural language commands.  Early benchmarks such
+as IFEval \cite{zhou2023ifeval} established a standardised framework for measuring how
+well models can follow instructions in English, but they quickly revealed a critical
+limitation: the lack of multilingual coverage. M‑IFEval \cite{li2025xifbench}, XIFBench
+\cite{he2024multi}, and Multi‑IF \cite{he2024multi} have since expanded the scope to
+include 3, 6 and 8 languages, respectively. Marco-Bench-MIF \cite{zeng-etal-2025-marco}
+extended the work to a commendable 30 languages, but these efforts are still limited to
+a small subset of the world’s languages.
+
+To bridge this gap, we introduce **MultiIFEval**, a benchmark that expands IFEval to 304
+target languages. Leveraging a large language model, we both translate and localise
+every English prompt–response pair into each language, with localised grounding coming
+from Wikipedia articles in the given language. The resulting dataset spans high‑resource
+languages like Spanish and Mandarin as well as low‑resource ones such as Xhosa and
+Quechua, providing an unprecedented testbed for multilingual instruction following.
+
+In addition to automated translations, we provide a manually translated Danish subset
+curated by native speakers and validated by experts. This dual approach allows us to
+quantify the impact of translation quality on model performance—an aspect largely
+unexplored in prior work. Similar manually translations and localisations have been done
+for Estonian \cite{missing} and French \cite{missing} as well, which we also include in
+our analysis.
+
+Our main contributions are as follows:
+
+\begin{itemize}
+\item We create a multilingual instruction‑following benchmark spanning 304 languages.
+\item We provide a manually translated and localised Danish subset for expert validation
+  and comparison with machine translations.
+\item We analyse the model performance discrepancies of the machine translated and
+  manually translated versions of the Danish, Estonian and French versions of the
+  dataset.
+\item We evaluate XXX models on all 304 languages of the dataset.
+\end{itemize}
+
+
+\section{Dataset Generation}
+\label{sec:dataset-generation}
+
+Missing
+
+\subsection{Manual Danish Translation}
+\label{sec:manual-danish-translation}
+
+Missing
+
+\subsection{Machine Translated Dataset}
+\label{sec:mt-dataset}
+
+Missing
+
+
+\section{Evaluations of Language Models}
+\label{sec:evaluation}
+
+Missing
+
+
+\section{Comparison of Machine Translated and Manually Translated Datasets}
+\label{sec:comparison}
+
+Missing
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Missing
+
+
+\section{Acknowledgements}
+\label{sec:acknowledgements}
+
+Missing
+
+
+\bibliography{custom,anthology}
+
+\appendix
+
+\section{Example Appendix}
+\label{sec:appendix}
+
+Missing
+
+\end{document}
