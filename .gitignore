@@ -125,3 +125,4 @@ data/ifeval-*.jsonl
 **/*.fls
 **/*.synctex.gz
 **/*.bst
+**/anthology.bib
