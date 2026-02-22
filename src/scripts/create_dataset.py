@@ -1,11 +1,12 @@
 """Push the translated JSONL files to the Hugging Face Hub as a single dataset."""
 
-import json
 from pathlib import Path
 
 import bits_and_bobs as bnb
 from datasets import Dataset
 from tqdm.auto import tqdm
+
+from multi_ifeval.data_models import Example
 
 
 def main() -> None:
@@ -18,7 +19,12 @@ def main() -> None:
         unit="subset",
     ):
         with jsonl_path.open() as f:
-            examples = [json.loads(line) for line in f if line.strip()]
+            examples = [
+                Example.model_validate_json(line).model_dump()
+                for line in f
+                if line.strip()
+            ]
+
         dataset = Dataset.from_list(examples)
 
         language_code = jsonl_path.stem.split("-")[-1]
