@@ -11,6 +11,7 @@ maintainers = [
 ]
 requires-python = ">=3.12,<4.0"
 dependencies = [
+    "bits-and-bobs>=0.2.0",
     "click>=8.3.1",
     "datasets>=4.5.0",
     "litellm>=1.81.12",
