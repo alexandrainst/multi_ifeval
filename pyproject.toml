@@ -15,6 +15,7 @@ dependencies = [
     "click>=8.3.1",
     "datasets>=4.5.0",
     "litellm>=1.81.12",
+    "loguru>=0.7.3",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
 ]
