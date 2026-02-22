@@ -42,7 +42,7 @@ def main() -> None:
     ):
         language_code = jsonl_path.stem.split("-")[-1]
         if language_code in existing_subsets:
-            logger.info(f"{language_code} already exists. Skipping.")
+            continue
 
         with jsonl_path.open() as f:
             examples = [
