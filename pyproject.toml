@@ -29,7 +29,7 @@ file = "LICENSE"
 
 [dependency-groups]
 dev = [
-    "pytest>=8.4.1",
+    "pytest>=9.0.3",
     "pytest-cov>=6.2.1",
     "pre-commit>=4.3.0",
     "readme-coverage-badger>=1.0.1",
