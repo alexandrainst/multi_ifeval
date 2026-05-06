@@ -42,7 +42,7 @@ dev = [
     "mkdocs-include-markdown-plugin>=7.1.6",
     "mkdocs-include-dir-to-nav>=1.2.0",
     "mkapi>=4.4.5",
-    "pip>=25.3.0",
+    "pip>=26.1",
 ]
 
 [tool.ruff]
