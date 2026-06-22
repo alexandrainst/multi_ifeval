@@ -42,6 +42,6 @@ class GeneratedExample(BaseModel):
             )
 
         self.new_kwargs = [
-            [kwarg for kwarg in kwarg_list if kwarg.value not in {"", []}]
+            [kwarg for kwarg in kwarg_list if kwarg.value not in ("", [])]
             for kwarg_list in self.new_kwargs
         ]
