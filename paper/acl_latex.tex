@@ -111,7 +111,20 @@ and the reason for this is that the language model we used for generation did no
 support dictionaries as values in the JSON schema used in structured generation, so the
 is merely a rephrasing of the keyword arguments to obey this constraint.
 
-TODO
+We use Gemini-3-flash-preview~\cite{gemini} for dataset generation with zero-shot
+prompting. Structured generation via JSON schema ensures consistent output format and
+facilitates automated validation. For each target language, we provide a randomly
+selected Wikipedia article in that language as contextual grounding. This serves two
+purposes: (1) it reduces hallucination by anchoring the model in authentic
+language-specific content, and (2) it provides cultural context that informs
+localisation decisions beyond literal translation.
+
+Localisation---adapting content to a specific culture and locale---is essential for
+instruction-following benchmarks. Direct translation often preserves source-culture
+references (e.g., holidays, currencies, place names, cultural practices) that feel
+foreign or unnatural to native speakers. Our localisation approach asks the model to
+adapt prompts so they read as if originally authored in the target language, replacing
+Anglocentric examples with culturally appropriate equivalents.
 
 
 \begin{figure*}[h]
@@ -162,12 +175,37 @@ instruction ID in the `new_instruction_id_list`.
 \subsection{Manual Danish Translation}
 \label{sec:manual-danish-translation}
 
-Missing
+To validate the quality of machine-translated samples, we created a manually translated
+and localised Danish subset of IFEval. Two native Danish speakers on our research team
+translated all prompts, with careful attention to localisation: cultural references
+were adapted to Danish contexts (e.g., replacing American holidays with Danish
+traditions, converting measurements to metric, using Danish place names and currency).
+The manual translation serves as a gold standard against which we evaluate the machine
+translation quality in Section~\ref{sec:comparison}.
+
+Danish was selected for manual translation for two reasons: first, it is well-represented
+in training corpora, making it an informative test case for machine translation
+quality; second, having native speakers on our team enabled rigorous manual validation
+without external contracting costs or delays.
 
 \subsection{Machine Translated Dataset}
 \label{sec:mt-dataset}
 
-Missing
+We generated machine-translated versions of IFEval for 305 languages using the prompt
+template shown in Figure~\ref{fig:prompt}. For each language, we selected a
+contemporary Wikipedia article at random to provide contextual grounding. The
+structured generation pipeline enforces strict preservation of \texttt{instruction\_id\_list}
+values, ensuring traceability to original English samples. The \texttt{kwargs} are
+reformulated as lists of name--value pairs to comply with the JSON schema constraints
+of the generation model.
+
+Quality control is enforced at multiple levels: (1) the JSON schema guarantees valid
+output structure; (2) we validate that all instruction IDs from the source are present
+in the output; (3) we verify that kwargs retain their original keys, with only values
+modified where localisation is appropriate. Due to model limitations, a small subset
+of languages yielded empty or malformed outputs; these are excluded from the released
+dataset. The final MultiIFEval corpus covers 305 languages with varying sample counts
+depending on source availability and generation success rate.
 
 
 \section{Evaluations of Language Models}
