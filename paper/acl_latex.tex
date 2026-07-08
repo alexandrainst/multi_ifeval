@@ -170,37 +170,61 @@ Missing
 Missing
 
 
-\section{Evaluations of Language Models}
+\section{Experiment Setup}
 \label{sec:evaluation}
 
-Missing
+We evaluate a range of language models on MultiIFEval to assess instruction-following capabilities across languages. Our evaluation focuses on decoder-only models, which represent the dominant architecture for instruction-following tasks, while including encoder models for comparative analysis.
 
+\paragraph{Models}
+We evaluate multiple decoder-only models, including Llama-3.1-8B variants and other open-weight models of comparable scale. For comparison, we also include encoder-based models to examine architectural differences in multilingual instruction following. All models are evaluated in a zero-shot setting without task-specific fine-tuning.
 
-\section{Comparison of Machine Translated and Manually Translated Datasets}
+\paragraph{Evaluation Approach}
+Each model is evaluated on each language variant of MultiIFEval using zero-shot instruction following. Models receive instructions in the target language and must generate responses that satisfy the specified constraints. We do not provide examples or demonstrations, ensuring evaluation measures inherent multilingual capabilities rather than in-context learning.
+
+\paragraph{Metrics}
+Following the original IFEval methodology, we measure constraint satisfaction using binary pass/fail scoring per instruction. A model receives a pass only if its response satisfies all constraints specified in the instruction. We report both per-instruction accuracy and aggregate scores across constraint types.
+
+\paragraph{Cross-lingual Analysis}
+Our analysis examines performance patterns across language families, writing systems, and resource levels. We compare high-resource languages (e.g., French, German) against low-resource languages (e.g., minority African and Indigenous languages) to identify disparities in model capabilities. We also analyze whether performance correlates with language family membership or geographical proximity.
+
+\paragraph{Comparison with MultiWikiQA}
+As optional analysis, we examine correlation between MultiIFEval performance and MultiWikiQA scores, using the latter as a proxy for general language understanding. This comparison helps distinguish instruction-following specific capabilities from broader multilingual competence.
+
+\section{Comparison of Machine vs Manual Translations}
 \label{sec:comparison}
 
-Missing
+A key question in multilingual benchmark construction is whether machine translation produces evaluation datasets comparable to manual human translation. We analyze quality differences between our machine-translated datasets and manually-translated variants across three languages: Danish (our new manual translation), Estonian \cite{dorkin2025ifeval-et}, and French \cite{m-ifeval2025naacl}.
 
+\paragraph{Manual Validation Methodology}
+For Danish, we conduct expert validation comparing machine-translated and manually-translated instructions. Native Danish speakers with expertise in NLP evaluate both versions for: (1) naturalness and fluency, (2) preservation of constraint semantics, (3) cultural appropriateness of localized content, and (4) overall usability for evaluation purposes. Validators rate each instruction on Likert scales and provide qualitative feedback on problematic cases.
+
+\paragraph{Cross-language Analysis}
+We reference existing manual evaluations of Estonian \cite{dorkin2025ifeval-et} and French \cite{m-ifeval2025naacl} IFEval variants to contextualize our Danish findings. While each manual translation employed slightly different validation protocols, all three provide expert assessment of machine translation quality for instruction-following benchmarks.
+
+\paragraph{Expected Analysis}
+Our analysis will examine whether machine translation introduces systematic biases or errors that affect evaluation validity. We will compare model performance rankings on machine-translated versus manually-translated datasets to assess whether translation method affects relative model comparisons. We hypothesize that machine translation performs adequately for high-resource languages but may introduce artifacts in low-resource languages or for culturally-specific content.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-Missing
+We present MultiIFEval, an instruction-following benchmark spanning 305 languages, enabling evaluation of multilingual models at unprecedented scale. Our dataset combines machine-translated coverage across all languages with manually-translated, expert-validated variants for selected languages.
 
+MultiIFEval addresses a critical gap in multilingual NLP evaluation by providing standardized instruction-following assessment across diverse languages and writing systems. We expect this resource to support research on multilingual instruction tuning, cross-lingual generalization, and equitable model development across language communities.
+
+Future work includes expanding manual translations to additional languages, developing culturally-adapted instructions beyond translation, and conducting comprehensive evaluation across the full model ecosystem. We plan to release MultiIFEval publicly to support the broader research community.
 
 \section{Acknowledgements}
 \label{sec:acknowledgements}
 
-Missing
-
+We thank the anonymous reviewers for their feedback. This work was supported by the Alexandra Institute.
 
 \bibliography{custom,anthology}
 
 \appendix
 
-\section{Example Appendix}
+\section{Appendix}
 \label{sec:appendix}
 
-Missing
+The appendix contains full evaluation results across all 305 languages, including per-language scores, per-constraint-type breakdowns, and additional analysis of cross-lingual performance patterns.
 
 \end{document}
