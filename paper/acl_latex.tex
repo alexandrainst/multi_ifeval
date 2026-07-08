@@ -44,13 +44,11 @@
 We introduce MultiIFEval, a large‑scale instruction‑following benchmark that spans 302
 languages. Starting from the English IFEval dataset, we translate and localise each
 prompt–response pair into 302 target languages using Gemini‑3‑flash‑preview.
-
 We also create a new manually translated and localised Danish variant of the dataset,
 and conduct manual expert validation on the quality difference between the machine
 translated version of the dataset and the manually translated version, which showed that
 TODO. We also evaluated models on both the machine translated and manually translated
 versions of the Danish, Estonian and French versions of the dataset, showing that TODO.
-
 Lastly, we evaluate XXX models on all 302 languages of the dataset, showing that TODO.
 
 \end{abstract}
@@ -69,19 +67,20 @@ include 3, 6 and 8 languages, respectively. Marco-Bench-MIF \cite{zeng-etal-2025
 extended the work to a commendable 30 languages, but these efforts are still limited to
 a small subset of the world’s languages.
 
-To bridge this gap, we introduce **MultiIFEval**, a benchmark that expands IFEval to 302
-target languages. Leveraging a large language model, we both translate and localise
-every English prompt–response pair into each language, with localised grounding coming
-from Wikipedia articles in the given language. The resulting dataset spans high‑resource
-languages like Spanish and Mandarin as well as low‑resource ones such as Xhosa and
-Quechua, providing an unprecedented testbed for multilingual instruction following.
+To bridge this gap, we introduce \textbf{MultiIFEval}, a benchmark that expands IFEval
+to 302 target languages. Leveraging a large language model, we both translate and
+localise every English prompt–response pair into each language, with localised grounding
+coming from Wikipedia articles in the given language. The resulting dataset spans
+high‑resource languages like Spanish and Mandarin as well as low‑resource ones such as
+Xhosa and Quechua, providing an unprecedented testbed for multilingual instruction
+following.
 
 In addition to automated translations, we provide a manually translated Danish subset
 curated by native speakers and validated by experts. This dual approach allows us to
 quantify the impact of translation quality on model performance—an aspect largely
 unexplored in prior work. Similar manually translations and localisations have been done
-for Estonian \cite{missing} and French \cite{missing} as well, which we also include in
-our analysis.
+for Estonian \cite{dorkin2025ifeval-et} and French \cite{alhajar2024ifeval-fr} as well,
+which we also include in our analysis.
 
 Our main contributions are as follows:
 
@@ -99,7 +98,66 @@ Our main contributions are as follows:
 \section{Dataset Generation}
 \label{sec:dataset-generation}
 
-Missing
+The MultiIFEval dataset is generated via prompting a large language model in a zero-shot
+fashion, for each sample of IFEval. The prompt contains both the instruction to
+translate and localise each English sample. To reduce the risk of hallucination when
+localising the examples, as well as to increase the quality of the translations, we
+include for each IFEval sample a randomly chosen Wikipedia page in the target language.
+We use structured generation to ensure that the output is of the correct format. The
+full prompt can be found in Figure~\ref{fig:prompt}.
+
+The structure of the generated \texttt{kwargs} deviate from the input \texttt{kwargs},
+and the reason for this is that the language model we used for generation did not
+support dictionaries as values in the JSON schema used in structured generation, so the
+is merely a rephrasing of the keyword arguments to obey this constraint.
+
+TODO
+
+
+\begin{figure*}[h]
+\centering
+\small
+\begin{verbatim}
+You are a professional translator from English to {target_language} (language code:
+'{target_language_code}').
+
+Here is an instruction-following example in English:
+
+<example>
+{"prompt": <prompt>, "instruction_id_list": <instruction_id_list>, "kwargs": <kwargs>}
+</example>
+
+You need to translate the example to {target_language}. This means the following:
+
+1. The `prompt` should be translated to {target_language}. You should localise these to
+   {target_language} and its country's culture.
+2. The `instruction_id_list` should remain exactly the same.
+3. The keys in the kwargs dictionaries should be completely unchanged, and the values
+   should _only_ be changed if they contain English words or phrases, which would need
+   to be changed to the equivalent in {target_language}.
+
+Here is an example of some text written in {language.name}:
+
+<{target_language_code}_example>
+{wikipedia_article_in_target_language}
+</{target_language_code}_example>
+
+You should return the translated example in JSON format, with the following structure:
+
+- `new_prompt` (str): The translated prompt.
+- `new_instruction_id_list` (list[str]): The translated instruction ID list.
+- `new_kwargs` (list[list[dict]]): The translated keyword arguments.
+
+Here the `new_kwargs` must be a list of the same length as the
+`new_instruction_id_list`, containing lists of dicts, each with keys `name` and `value`,
+where `name` is the name of the keyword argument and `value` is the value of the keyword
+argument. Each list of kwarg dicts should be the keyword arguments for the corresponding
+instruction ID in the `new_instruction_id_list`.
+\end{verbatim}
+\caption{Prompt used to generate the MultiIFEval dataset.}
+\label{fig:prompt}
+\end{figure*}
+
 
 \subsection{Manual Danish Translation}
 \label{sec:manual-danish-translation}
