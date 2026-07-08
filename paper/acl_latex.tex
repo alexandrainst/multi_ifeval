@@ -42,14 +42,15 @@
 \begin{abstract}
 
 We introduce MultiIFEval, a large‑scale instruction‑following benchmark that spans 305
-languages. Starting from the English IFEval dataset, we translate and localise each
-prompt–response pair into 305 target languages using Gemini‑3‑flash‑preview.
-We also create a new manually translated and localised Danish variant of the dataset,
-and conduct manual expert validation on the quality difference between the machine
-translated version of the dataset and the manually translated version, which showed that
-TODO. We also evaluated models on both the machine translated and manually translated
-versions of the Danish, Estonian and French versions of the dataset, showing that TODO.
-Lastly, we evaluate XXX models on all 305 languages of the dataset, showing that TODO.
+languages. Starting from the English IFEval dataset \cite{zhou2023ifeval}, we translate
+and localise each prompt–response pair into 305 target languages using an LLM-based
+pipeline with Wikipedia-grounded localisation. We create a manually translated Danish
+variant of the dataset and conduct human expert validation to assess quality differences
+between machine-translated and manually-translated Danish. We evaluate models on both
+machine-translated and manually-translated Danish, as well as on Estonian \cite{dorkin2025ifeval-et}
+and French \cite{alhajar2024ifeval-fr} variants from prior work. Finally, we evaluate
+multiple models across all 305 languages to establish a comprehensive baseline for
+cross-lingual instruction following capability.
 
 \end{abstract}
 
@@ -58,40 +59,65 @@ Lastly, we evaluate XXX models on all 305 languages of the dataset, showing that
 \label{sec:intro}
 
 Instruction following evaluation has become central to developing practical AI systems
-capable of understanding and executing natural language commands.  Early benchmarks such
-as IFEval \cite{zhou2023ifeval} established a standardised framework for measuring how
-well models can follow instructions in English, but they quickly revealed a critical
-limitation: the lack of multilingual coverage. M‑IFEval \cite{li2025xifbench}, XIFBench
-\cite{he2024multi}, and Multi‑IF \cite{he2024multi} have since expanded the scope to
-include 3, 6 and 8 languages, respectively. Marco-Bench-MIF \cite{zeng-etal-2025-marco}
-extended the work to a commendable 30 languages, but these efforts are still limited to
-a small subset of the world’s languages.
+capable of understanding and executing natural language commands. The release of IFEval
+\cite{zhou2023ifeval} established a standardised framework for measuring how well models
+can follow verifiable instructions in English, providing a rigorous benchmark that goes
+beyond traditional task completion metrics. However, IFEval's English-only scope reveals
+a critical limitation: as large language models are increasingly deployed across diverse
+linguistic contexts, evaluation benchmarks confined to English fail to capture
+performance disparities that arise from multilingual instruction following.
+
+The gap between monolingual and multilingual evaluation has only partially been addressed
+by recent work. M-IFEval \cite{li2025xifbench} expanded to 3 languages, XIFBench
+\cite{he2024multi} covered 6 languages, and Multi-IF \cite{he2024multi} reached 8
+languages. More recently, Marco-Bench-MIF \cite{zeng-etal-2025-marco} extended coverage
+to 30 languages. While these efforts represent important progress, they collectively
+cover fewer than 1\% of the world's approximately 7,000 languages, leaving the vast
+majority of linguistic communities without instruction-following evaluation resources.
+This limitation is particularly acute for low-resource languages, where model behaviour
+may diverge significantly from high-resource settings due to differences in training
+data availability, tokenisation quality, and linguistic structure.
 
 To bridge this gap, we introduce \textbf{MultiIFEval}, a benchmark that expands IFEval
-to 305 target languages. Leveraging a large language model, we both translate and
-localise every English prompt–response pair into each language, with localised grounding
-coming from Wikipedia articles in the given language. The resulting dataset spans
-high‑resource languages like Spanish and Mandarin as well as low‑resource ones such as
-Xhosa and Quechua, providing an unprecedented testbed for multilingual instruction
-following.
+to 305 target languages, representing an order-of-magnitude increase in multilingual
+coverage. Our methodology leverages large language models to both translate and localise
+every English prompt–response pair from the original IFEval dataset into each target
+language. Crucially, our localisation pipeline grounds translations in Wikipedia
+articles in the target language, ensuring that cultural references, proper nouns, and
+contextual examples are adapted appropriately rather than translated literally. The
+resulting dataset spans high-resource languages such as Spanish, Mandarin, and Arabic,
+as well as low-resource languages including Xhosa, Quechua, and Samoan, providing an
+unprecedented testbed for evaluating multilingual instruction following at scale.
 
-In addition to automated translations, we provide a manually translated Danish subset
-curated by native speakers and validated by experts. This dual approach allows us to
-quantify the impact of translation quality on model performance—an aspect largely
-unexplored in prior work. Similar manually translations and localisations have been done
-for Estonian \cite{dorkin2025ifeval-et} and French \cite{alhajar2024ifeval-fr} as well,
-which we also include in our analysis.
+In addition to machine-translated versions, we provide a manually translated and
+localised Danish subset curated by native speakers and validated by domain experts. This
+dual approach enables systematic comparison between machine-translated and
+human-translated instruction-following benchmarks, allowing us to assess whether
+translation quality meaningfully impacts model evaluation outcomes—an aspect largely
+unexplored in prior multilingual benchmark work. We also incorporate manually translated
+Estonian \cite{dorkin2025ifeval-et} and French \cite{alhajar2024ifeval-fr} variants
+from recent independent efforts, enabling cross-lingual analysis across multiple
+European languages with human-validated translations.
 
-Our main contributions are as follows:
+Our main contributions are methodological:
 
 \begin{itemize}
-\item We create a multilingual instruction‑following benchmark spanning 305 languages.
-\item We provide a manually translated and localised Danish subset for expert validation
-  and comparison with machine translations.
-\item We analyse the model performance discrepancies of the machine translated and
-  manually translated versions of the Danish, Estonian and French versions of the
-  dataset.
-\item We evaluate XXX models on all 305 languages of the dataset.
+\item We present a 305-language instruction-following benchmark, expanding multilingual
+  coverage from the prior maximum of 30 languages to 305, spanning languages across all
+  inhabited continents and representing diverse language families and resource levels.
+
+\item We create a manually translated and localised Danish variant, enabling direct
+  comparison between machine translation and human translation quality for instruction
+  following evaluation, with expert validation to assess the validity of
+  LLM-based translation pipelines.
+
+\item We develop a methodology for LLM-based translation with Wikipedia-grounded
+  localisation, providing a reproducible approach for adapting instruction-following
+  benchmarks to new languages while preserving cultural and contextual appropriateness.
+
+\item We establish an evaluation framework for cross-lingual instruction following that
+  will be applied across all 305 languages, enabling systematic analysis of how model
+  performance varies across language families, resource levels, and translation methods.
 \end{itemize}
 
 
