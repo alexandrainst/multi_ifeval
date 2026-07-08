@@ -121,6 +121,34 @@ Our main contributions are methodological:
 \end{itemize}
 
 
+\section{Related Work}
+\label{sec:related-work}
+
+\paragraph{IFEval}
+% Original English benchmark
+\cite{zhou2023ifeval} introduced IFEval, the first systematic benchmark for instruction-following evaluation in large language models. IFEval comprises approximately 500 prompts with verifiable constraints that can be checked programmatically, enabling objective binary evaluation of whether models successfully follow instructions. The benchmark covers four constraint types: content inclusion/exclusion, formatting requirements, length constraints, and punctuation rules. While IFEval established a rigorous framework for measurable instruction-following assessment, its scope is limited to English, leaving open the question of how models perform when following instructions in other languages.
+
+\paragraph{M-IFEval}
+% 3 languages, translated + language-specific
+\cite{m-ifeval2025naacl} extended IFEval to three languages---French, Japanese, and Spanish---creating M-IFEval. This work evaluated both translated versions of the original English prompts and language-specific instructions designed natively in each target language. Their evaluation of 8 LLMs revealed notable cross-lingual performance gaps, with models generally performing worse on non-English instructions even when capabilities appeared comparable on English tasks. M-IFEval demonstrated that instruction-following quality does not transfer uniformly across languages, motivating broader multilingual evaluation.
+
+\paragraph{XIFBench}
+% 6 languages, constraint-based taxonomy
+\cite{li2025xifbench} introduced XIFBench, expanding coverage to 6 languages with a fine-grained constraint taxonomy organised into five categories: Content, Style, Situation, Format, and Numerical constraints. XIFBench comprises 558 instructions designed to test specific constraint types, enabling diagnostic analysis of where models fail. Their taxonomy provides a structured framework for understanding instruction-following weaknesses, though coverage remains limited to a small set of predominantly high-resource languages.
+
+\paragraph{Multi-IF}
+% 8 languages, multi-turn
+\cite{he2024multi} further expanded multilingual instruction following to 8 languages with Multi-IF, introducing the critical dimension of multi-turn interaction. Rather than evaluating single-turn instructions, Multi-IF assesses how well models follow sequences of constraints across multiple conversational turns. Their findings showed that models struggle significantly more with multi-turn constraints compared to single-turn instructions, with performance degrading as the number of constraints accumulates across turns. This work highlighted that real-world instruction following often requires maintaining constraints over extended interactions, not just single prompts.
+
+\paragraph{Marco-Bench-MIF}
+% 30 languages, localisation vs translation
+\cite{zeng-etal-2025-marco} represents the largest prior effort with Marco-Bench-MIF, covering 30 languages. Crucially, this work distinguished between machine translation and localisation, adapting prompts to reflect cultural context and local knowledge rather than translating literally. Their evaluation of over 20 LLMs uncovered substantial disparities: 25--35\% performance gaps between high-resource and low-resource languages, and 7--22\% gaps between machine-translated and properly localised prompts. These findings underscore that translation method meaningfully impacts evaluation outcomes and that resource disparities remain a central challenge.
+
+\paragraph{Gap}
+% Motivating our 305-language scale
+Despite this progressive expansion, prior multilingual instruction-following benchmarks have reached a maximum of 30 languages, representing less than 0.5\% of the world's approximately 7,000+ languages. MultiIFEval addresses this gap by covering 305 languages---a tenfold increase over the previous maximum---providing unprecedented coverage across diverse language families, resource levels, and geographic regions. This scale enables systematic analysis of instruction-following capabilities across the full spectrum of linguistic diversity, rather than a narrow subset of high-resource languages.
+
+
 \section{Dataset Generation}
 \label{sec:dataset-generation}
 
