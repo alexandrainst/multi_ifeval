@@ -127,3 +127,4 @@ data/ifeval-*.jsonl
 **/*.bst
 **/acl_latex.pdf
 **/anthology.bib
+hf_upload/
