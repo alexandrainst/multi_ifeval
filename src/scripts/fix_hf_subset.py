@@ -137,11 +137,12 @@ RELATION_MAPPINGS = {
     "อย่างน้อย": "at least",
     # Vietnamese
     "ít hơn": "less than",
-    "ít nhất": "at least",
-    # Indonesian/Malay
+    "ít nhất": "at least",  # Indonesian/Malay
     "kurang dari": "less than",
     "setidaknya": "at least",
     "sekurang-kurangnya": "at least",
+    # Banjar
+    "paling sadikit": "at least",
     # Minangkabau
     "paliang indak": "less than",
     "paliang saketek": "at least",
@@ -334,6 +335,41 @@ RELATION_MAPPINGS = {
     # Persian/Farsi
     "کمتر از": "less than",
     # And many more...
+    # Lingala (ln)
+    "na sé ya": "at least",
+    # Mon (mnw)
+    "အောန်အိုတ်": "at least",
+    "အောန်နူ": "at least",
+    "ဗွဲအောန်အိုတ်": "at least",
+    # Ossetian (os)
+    "æппынкъаддæр": "at least",
+    # Papiamento (pap)
+    "por lo ménos": "at least",
+    "menos cu": "less than",
+    # Picard (pcd)
+    "moins que": "less than",
+    "moins d'": "less than",
+    # Western Punjabi (pnb)
+    "توں گھٹ": "less than",
+    # Sindhi (sd)
+    "گهٽ": "less than",
+    # Shan (shn)
+    "တီႈဢေႇသုတ်း": "at least",
+    # Sakizaya (szy)
+    "makaadih tu": "at least",
+    # Tigrinya (ti)
+    "እንተወሓደ": "at least",
+    # Talysh (tly)
+    "ləpə-ləp": "at least",
+    # Taroko (trv)
+    "ini dhuq 31": "at least",
+    "hici bi o 30": "at least",
+    # Tahitian (ty)
+    "iti a'e i te": "less than",
+    # Uzbek (uz)
+    "kamroq": "less than",
+    # Kalmyk (xal)
+    "баһар гихд": "at least",
 }
 
 
